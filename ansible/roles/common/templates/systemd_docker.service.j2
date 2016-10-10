@@ -1,0 +1,12 @@
+[Unit]
+Description={{ service_description }}
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart={{ restart_policy }}
+ExecStart={{ exec_start }}
+ExecStop={{ exec_stop }}
+
+[Install]
+WantedBy=default.target

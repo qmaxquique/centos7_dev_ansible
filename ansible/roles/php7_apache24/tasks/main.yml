@@ -1,0 +1,106 @@
+---
+# Install PHP7 and APACHE2.4
+
+- name: Add EPEL and Webstatic Repositories
+  yum: state=present name={{ item }}
+  with_items:
+    - https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    - https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
+
+- name: Install Apache and PHP7 Packages
+  yum: state=present name={{ item }}
+  with_items:
+    - httpd
+    - php70w
+    - php70w-devel
+    - php70w-ldap
+    - php70w-mbstring
+    - php70w-mbstring
+    - php70w-mcrypt
+    - php70w-mysql
+    - php70w-opcache
+    - php70w-pdo
+    - php70w-pear
+    - php70w-snmp
+    - php70w-xml
+    - php70w-gd
+
+- name: Install Additional Utilities
+  yum: state=present name={{ item }}
+  with_items:
+    - wget
+    - unzip
+    - telnet
+    - apachetop
+    - mysql
+    - iotop
+
+- name: Install Composer
+  command: "{{ item }} chdir=/tmp"
+  with_items:
+    - wget -qq https://getcomposer.org/installer
+    - php installer --install-dir=/bin --filename=composer
+  args:
+    creates: /bin/composer
+
+- name: Correct Composer Executable Permissions
+  file:
+    path=/bin/composer mode=0755
+
+- name: Add Zoo group
+  group:
+    name=zoo gid=503 state=present
+
+- name: Make sure Apache can write session files
+  user:
+    name=apache group=zoo groups=apache append=yes
+
+- name: Make sure Apache can write session files (2)
+  file:
+    path='/var/lib/php' mode=0775 owner=root group=zoo recurse=yes
+
+- name: Add develper User
+  user:
+    name=developer comment="User that will own shared files" uid=501 group=zoo state=present
+
+- name: Create Apache Directories
+  file: path={{ item }} state=directory mode=0755 owner=developer group=zoo recurse=yes
+  with_items:
+    - '/local/vhosts/devsites'
+    - '/local/log'
+    - '/local/config'
+    - '/local/htdocs/site'
+  ignore_errors: yes
+
+- name: Copy Config files
+  copy:
+    src=files/{{ item.filename }} dest={{ item.dest }} owner=root group=root mode=0664
+  with_items:
+    - { filename: 'php.ini', dest: '/local/config/php.ini' }
+    - { filename: 'httpd.conf', dest: '/local/config/httpd.conf' }
+
+- name: Delete Original Config and log files
+  file:
+    path={{ item }} state=absent
+  with_items:
+    - '/etc/php.ini'
+    - '/etc/httpd/conf/httpd.conf'
+    - '/var/log/httpd/'
+  ignore_errors: yes
+
+- name: Set SELinux as Permissive to allow Apache linked Config
+  selinux: state=disabled
+
+- name: Link Config and log files
+  file:
+    src={{ item.src }} dest={{ item.dest }} state=link
+  with_items:
+    - { src: '/local/config/php.ini', dest: '/etc/php.ini' }
+    - { src: '/local/config/httpd.conf', dest: '/etc/httpd/conf/httpd.conf' }
+    - { src: '/local/log', dest: '/var/log/httpd' }
+  notify:
+    - reload service
+
+- name: Update Host file
+  lineinfile:
+    dest=/etc/hosts regexp='^127\.0\.0\.1' line='127.0.0.1 db' owner=root group=root mode=0644

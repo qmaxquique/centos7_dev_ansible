@@ -1,0 +1,6 @@
+---
+service_description: Delayed Docker Startup Script
+service_name: delayed_docker
+service_after: sshd.service
+exec_start: "/root/docker_start.sh"
+start_at_boot: yes

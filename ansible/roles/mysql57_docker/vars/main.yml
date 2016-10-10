@@ -1,0 +1,16 @@
+---
+docker_image: "docker.io/mysql:5.7"
+service_name: "mysql57"
+service_description: "MySQL 5.7 Docker Container Service"
+
+exec_start: /usr/bin/docker start -a {{ service_name }}
+exec_stop: /usr/bin/docker stop  {{ service_name }}
+port: 3306
+restart_policy: always
+start_at_boot: no
+
+# MySQL Crecentials
+root_password: "hdmz"
+user: "hdmz"
+user_password: "hdmz"
+db: "c5"

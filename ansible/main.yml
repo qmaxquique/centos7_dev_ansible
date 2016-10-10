@@ -1,0 +1,9 @@
+- hosts: lamp
+  gather_facts: yes
+
+  roles:
+    - docker_host
+    - mysql57
+    - phpmyadmin_docker
+    - php7_apache24
+    - docker_vagrant

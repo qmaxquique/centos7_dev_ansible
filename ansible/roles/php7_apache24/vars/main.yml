@@ -1,0 +1,4 @@
+---
+service_name: httpd
+restart_policy: always
+start_at_boot: yes

@@ -1,0 +1,9 @@
+---
+docker_image: "phpmyadmin/phpmyadmin"
+service_name: "phpmyadmin"
+service_description: "PhpMyAdmin Docker Container Service"
+port: 9090
+restart_policy: always
+start_at_boot: no
+exec_start: /usr/bin/docker start -a {{ service_name }}
+exec_stop: /usr/bin/docker stop -t 2 {{ service_name }}

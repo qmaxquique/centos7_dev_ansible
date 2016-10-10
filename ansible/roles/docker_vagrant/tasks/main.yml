@@ -1,0 +1,21 @@
+---
+
+- name: Copy Script File
+  copy:
+    src=files/docker_start.sh
+    dest={{ exec_start }}
+    owner=root
+    group=root
+    mode=755
+
+- name: Install Docker Delayed Start Service
+  template:
+    src=roles/common/templates/systemd_simple.service.j2
+    dest=/etc/systemd/system/{{ service_name }}.service
+  notify:
+    - reload systemd
+    - reload service
+
+- name: Enable Docker Delayed Service
+  service:
+    name={{ service_name }} enabled={{ start_at_boot }}

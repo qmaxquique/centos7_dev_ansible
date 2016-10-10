@@ -1,0 +1,39 @@
+---
+# Install a Docker host to run containerized applications
+
+- name: Add Docker Repository
+  yum_repository:
+    file: dockerrepo
+    name: docker
+    description: Docker Repository
+    baseurl: "https://yum.dockerproject.org/repo/main/centos/7/"
+    enabled: yes
+    gpgcheck: yes
+    gpgkey: "https://yum.dockerproject.org/gpg"
+
+- name: Install Dependences
+  yum: state=present name={{ item }}
+  with_items:
+    - git
+    - python-pip
+
+- name: Install Python Pip Dependences
+  pip: name=docker-py version=1.9.0
+
+- name: Install Docker
+  yum: name=docker-engine state=present
+
+#- name: Upgrade All Packages
+#  yum: name=* state=latest
+
+- name: Run Docker Service
+  service: |
+    name=docker.service
+    state=started
+    enabled={{ start_at_boot }}
+
+#- name: Create Symlink for Docker Volume Access
+#  file: |
+#    src="/var/lib/docker/volumes"
+#    dest="/volumes"
+#    state=link

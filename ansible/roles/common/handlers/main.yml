@@ -1,0 +1,10 @@
+---
+
+- name: reload systemd
+  shell: systemctl daemon-reload
+
+- name: reload service
+  service: |
+    name="{{ service_name }}.service"
+    state=restarted
+    enabled={{ start_at_boot }}

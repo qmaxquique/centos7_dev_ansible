@@ -1,0 +1,32 @@
+---
+# MySQL 5.7
+# Docker Based configuration
+
+- name: Create/Install MySQL 5.7 Container
+  docker_container:
+    name: "{{ service_name }}"
+    state: present
+    image: "{{ docker_image }}"
+    ports:
+      - "{{ port }}:3306" # HOST_PORT:CONTAINER_PORT
+    volumes:
+      - /local/mysql/logs:/var/log/mysql # MySQL Logs
+      - /local/mysql/conf.d:/etc/mysql/conf.d # MySQL Extra Config
+    env:
+      "MYSQL_ROOT_PASSWORD": "{{ root_password }}"
+      "MYSQL_USER": "{{ user }}"
+      "MYSQL_PASSWORD": "{{ user_password }}"
+      "MYSQL_DATABASE": "{{ db }}"
+
+- name: Start MySQL 5.7 Container
+  docker_container:
+    name: "{{ service_name }}"
+    state: started
+
+- name: Install MySQL57 Service
+  template:
+    src=roles/common/templates/systemd_docker.service.j2
+    dest=/etc/systemd/system/{{ service_name }}.service
+  notify:
+    - reload systemd
+    - reload service
