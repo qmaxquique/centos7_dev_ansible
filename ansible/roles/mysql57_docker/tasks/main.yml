@@ -2,7 +2,7 @@
 # MySQL 5.7
 # Docker Based configuration
 
-- name: Create/Install MySQL 5.7 Container
+- name: Create MySQL 5.7 Container
   docker_container:
     name: "{{ service_name }}"
     state: present
@@ -10,8 +10,8 @@
     ports:
       - "{{ port }}:3306" # HOST_PORT:CONTAINER_PORT
     volumes:
-      - /local/mysql/logs:/var/log/mysql # MySQL Logs
-      - /local/mysql/conf.d:/etc/mysql/conf.d # MySQL Extra Config
+      - /local/log/mysql/:/var/log/mysql # Logs
+      - /local/config/mysql/:/etc/mysql/conf.d # Config
     env:
       "MYSQL_ROOT_PASSWORD": "{{ root_password }}"
       "MYSQL_USER": "{{ user }}"

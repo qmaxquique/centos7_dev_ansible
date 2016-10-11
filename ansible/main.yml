@@ -3,7 +3,7 @@
 
   roles:
     - docker_host
-    - mysql57
+    - mysql57_docker
     - phpmyadmin_docker
     - php7_apache24
     - docker_vagrant

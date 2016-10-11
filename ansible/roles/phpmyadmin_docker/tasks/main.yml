@@ -9,8 +9,8 @@
     image: "{{ docker_image }}"
     ports:
       - "{{ port }}:80" # HOST_PORT:CONTAINER_PORT
-    env:
-      { "PMA_ARBITRARY" : 1 }
+    links:
+      - mysql57:db
 
 - name: Start PhpMyAdmin Container
   docker_container:

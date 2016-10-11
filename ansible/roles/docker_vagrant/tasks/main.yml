@@ -18,4 +18,4 @@
 
 - name: Enable Docker Delayed Service
   service:
-    name={{ service_name }} enabled={{ start_at_boot }}
+    name={{ service_name }} enabled=yes

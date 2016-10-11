@@ -76,30 +76,17 @@
   copy:
     src=files/{{ item.filename }} dest={{ item.dest }} owner=root group=root mode=0664
   with_items:
-    - { filename: 'php.ini', dest: '/local/config/php.ini' }
-    - { filename: 'httpd.conf', dest: '/local/config/httpd.conf' }
-
-- name: Delete Original Config and log files
-  file:
-    path={{ item }} state=absent
-  with_items:
-    - '/etc/php.ini'
-    - '/etc/httpd/conf/httpd.conf'
-    - '/var/log/httpd/'
-  ignore_errors: yes
-
-- name: Set SELinux as Permissive to allow Apache linked Config
-  selinux: state=disabled
-
-- name: Link Config and log files
-  file:
-    src={{ item.src }} dest={{ item.dest }} state=link
-  with_items:
-    - { src: '/local/config/php.ini', dest: '/etc/php.ini' }
-    - { src: '/local/config/httpd.conf', dest: '/etc/httpd/conf/httpd.conf' }
-    - { src: '/local/log', dest: '/var/log/httpd' }
+    - { filename: 'php.ini', dest: '/etc/php.ini' }
+    - { filename: 'httpd.conf', dest: '/etc/httpd/conf/httpd.conf' }
   notify:
     - reload service
+
+- name: Set SELinux as Permissive to allow Apache linked Config # (Disabling by now)
+  selinux: state=disabled
+
+- name: Enable Apache Service
+  service:
+    name=httpd state=started enabled=yes
 
 - name: Update Host file
   lineinfile:

@@ -2,7 +2,7 @@
 start_at_boot: yes
 
 # MySQL Crecentials
-root_password: "hdmz"
-user: "hdmz"
-user_password: "hdmz"
-db: "c5"
+root_password: "rootpassword"
+user: "user"
+user_password: "userpassword"
+db: "testdb"
